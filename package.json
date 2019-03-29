@@ -1,21 +1,33 @@
 {
   "name": "dialogflow-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "dialogflow server for cloud services",
+  "main": "cloudFunctions.js",
+  "engines": {
+    "node": "8"
+  },
   "scripts": {
     "dev": "nodemon --inspect server.js",
-    "tunnel": "ngrok http 8080"
+    "tunnel": "ngrok http 8080",
+    "lint": "standard",
+    "deploy": "firebase deploy --only functions"
   },
-  "keywords": [],
+  "license": "ISC",
+  "keywords": [
+    "google",
+    "dialogflow"
+  ],
   "author": "Jurrian Lammerts",
   "dependencies": {
     "actions-on-google": "^2.6.0",
     "dialogflow-fulfillment": "^0.6.1",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "firebase-admin": "^7.2.0",
+    "firebase-functions": "^2.2.1"
   },
   "devDependencies": {
+    "ngrok": "^3.1.1",
     "nodemon": "^1.18.10",
-    "ngrok": "^3.1.1"
+    "standard": "^12.0.1"
   }
 }
