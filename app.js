@@ -16,23 +16,23 @@ app.post('/dialogflow', express.json(), (req, res) => {
 
   function handleName(agent) {
     const name = agent.parameters.name;
-    const userId = 1;
+    const userId = 2;
 
     if (name) {
       agent.add(`Thank you ${name}!`);
 
       return admin
         .database()
-        .ref('/users/' + userId)
+        .ref('users/' + userId)
         .set({
           name: name
         })
-        .then(snapshot => {
-          // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-          console.log('database write succesfull: ' + snapshot.ref.toString());
-        });
+        // .then(snapshot => {
+        //   // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
+        //   console.log('database write succesfull: ' + snapshot.ref.toString());
+        // });
     } else {
-      agent.add(`Oops something went wrong... Please try again.`);
+      agent.add(`Oops something went wrong... Please try again`);
     }
   }
 
