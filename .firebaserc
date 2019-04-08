@@ -1,5 +1,6 @@
 {
   "projects": {
-    "VOIX": "voix-233614"
+    "VOIX": "voix-233614",
+    "voix": "voix-233614"
   }
 }

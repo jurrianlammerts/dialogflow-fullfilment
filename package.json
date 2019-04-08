@@ -2,14 +2,14 @@
   "name": "dialogflow-server",
   "version": "1.0.0",
   "description": "dialogflow server for cloud services",
-  "main": "cloudFunctions.js",
+  "main": "cloudFunc.js",
   "engines": {
     "node": "8"
   },
   "scripts": {
     "dev": "nodemon --inspect server.js",
     "tunnel": "ngrok http 8080",
-    "lint": "standard",
+    "lint": "standard -- --fix",
     "deploy": "firebase deploy --only functions"
   },
   "license": "ISC",
@@ -23,7 +23,8 @@
     "dialogflow-fulfillment": "^0.6.1",
     "express": "^4.16.4",
     "firebase-admin": "^7.2.0",
-    "firebase-functions": "^2.2.1"
+    "firebase-functions": "^2.2.1",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "ngrok": "^3.1.1",
