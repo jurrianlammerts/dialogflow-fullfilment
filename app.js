@@ -1,30 +1,8 @@
-
-const express = require('express')
-const { WebhookClient } = require('dialogflow-fulfillment')
-const dotenv = require('dotenv');
-const firebase = require('firebase');
-const sgMail = require('@sendgrid/mail');
-
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
-
+const express = require('express');
+const { WebhookClient } = require('dialogflow-fulfillment');
 const app = express();
-
-const app = express()
-
-const config = {
-  apiKey: process.env.API_KEY,
-  authDomain: process.env.AUTH_DOMAIN,
-  databaseURL: process.env.DB_URL,
-  projectId: process.env.PROJECT_ID,
-  storageBucket: process.env.STORAGE_BUCKET,
-  messagingSenderId: process.env.MESSAGING_SENDER_ID
-}
-
-sgMail.setApiKey(process.env.SENDGRID_KEY);
-firebase.initializeApp(config);
-
-app.get('/', (req, res) => res.send('online'))
 
 // initialise DB connection
 admin.initializeApp({
@@ -43,35 +21,6 @@ app.post('/dialogflow', express.json(), (req, res) => {
     if (name) {
       agent.add(`Thank you ${name}!`);
 
-  function welcome() {
-    agent.add('Welcome to my agent!')
-  }
-
-  function confirm() {
-    const db = firebase.firestore();
-    db.collection('users').get().then((snapshot) => {
-      snapshot.docs.forEach(doc => {
-        let items = doc.data();
-        console.log(items)
-
-        const msg = {
-          to: 'marvin.holleman@hotmail.nl',
-          from: 'bevestiging@voix.com',
-          subject: 'Afspraak bevestiging',
-          html: `Je naam: ${items.person.Naam} <br/> 
-           Geboortedatum: ${items.person.Geboortedatum} <br/>
-           Woonplaats: ${items.person.Woonplaats}`,
-        };
-        sgMail.send(msg);
-      });
-    });
-  }
-
-  let intentMap = new Map()
-  intentMap.set('Default Welcome Intent', welcome)
-  agent.handleRequest(intentMap)
-})
-
       return admin
         .database()
         .ref('/users/' + userId)
@@ -87,9 +36,79 @@ app.post('/dialogflow', express.json(), (req, res) => {
     }
   }
 
+
+  function handleAdress(agent) {
+    const adress = agent.parameters.adress;
+    const adressId = 1;
+
+    if (adress) {
+      agent.add(`Thank you ${adress}!`);
+
+      return admin
+        .database()
+        .ref('/adress/' + adressId)
+        .set({
+          adress: adress
+        })
+        .then(snapshot => {
+          // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
+          console.log('database write succesfull: ' + snapshot.ref.toString());
+        });
+    } else {
+      agent.add(`Oops something went wrong... Please try again.`);
+    }
+  }
+
+  function handleBuyOrRent(agent) {
+    const buying = agent.parameters.buying;
+    const buyinId = 1;
+
+    if (buying) {
+      agent.add(`Thank you ${buying}!`);
+
+      return admin
+        .database()
+        .ref('/buying/' + buyinId)
+        .set({
+          buying: buying
+        })
+        .then(snapshot => {
+          // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
+          console.log('database write succesfull: ' + snapshot.ref.toString());
+        });
+    } else {
+      agent.add(`Oops something went wrong... Please try again.`);
+    }
+  }
+
+  function handlePermit(agent) {
+    const permit = agent.parameters.permit;
+    const permitId = 1;
+
+    if (permit) {
+      agent.add(`Thank you ${permit}!`);
+
+      return admin
+        .database()
+        .ref('/permit/' + permitId)
+        .set({
+          permit: permit
+        })
+        .then(snapshot => {
+          // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
+          console.log('database write succesfull: ' + snapshot.ref.toString());
+        });
+    } else {
+      agent.add(`Oops something went wrong... Please try again.`);
+    }
+  }
+
   // Run the proper function handler based on the matched Dialogflow intent name
   let intentMap = new Map();
   intentMap.set('AskName', handleName);
+  intentMap.set('myAdress', handleAdress);
+  intentMap.set('rentOrBuy', handleBuyOrRent);
+  intentMap.set('parkingPermit', handlePermit);
   agent.handleRequest(intentMap);
 });
 
