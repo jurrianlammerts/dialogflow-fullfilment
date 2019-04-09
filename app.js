@@ -26,11 +26,7 @@ app.post('/dialogflow', express.json(), (req, res) => {
         .ref('users/' + userId)
         .set({
           name: name
-        })
-        // .then(snapshot => {
-        //   // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-        //   console.log('database write succesfull: ' + snapshot.ref.toString());
-        // });
+        });
     } else {
       agent.add(`Oops something went wrong... Please try again`);
     }
