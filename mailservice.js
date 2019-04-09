@@ -1,6 +1,14 @@
 
 const firebase = require('firebase');
+var admin = require("firebase-admin");
+
 const sgMail = require('@sendgrid/mail');
+const express = require('express')
+
+const app = express()
+
+const serviceAccount = require('./serviceAccountKey.json');
+
 
 const config = {
     apiKey: process.env.API_KEY,
@@ -10,26 +18,38 @@ const config = {
     storageBucket: process.env.STORAGE_BUCKET,
     messagingSenderId: process.env.MESSAGING_SENDER_ID
 }
+console.log(process.env.DB_URL)
+sgMail.setApiKey('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');
+// firebase.initializeApp(config);
 
-sgMail.setApiKey(process.env.SENDGRID_KEY);
-firebase.initializeApp(config);
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://voix-233614.firebaseio.com/'
+});
+
+app.get('/', (req, res) => res.send('online'))
 
 function confirm() {
-    const db = firebase.firestore();
-    db.collection('users').get().then((snapshot) => {
-        snapshot.docs.forEach(doc => {
-            let items = doc.data();
-            console.log(items)
-
+    // const db = firebase.app().database().ref('adress');
+    const db = admin.database();
+    const ref = db.ref("users");
+    ref.on('value', function (snapshot) {
+        snapshot.forEach(function (doc) {
+            let items = doc.val();
+            console.log('keys', items);
             const msg = {
                 to: 'marvin.holleman@hotmail.nl',
                 from: 'bevestiging@voix.com',
                 subject: 'Afspraak bevestiging',
-                html: `Je naam: ${items.person.Naam} <br/> 
-           Geboortedatum: ${items.person.Geboortedatum} <br/>
-           Woonplaats: ${items.person.Woonplaats}`,
+                html: `Je naam: ${items.name} <br/> 
+                   Geboortedatum: ${items.buying} <br/>
+                   Woonplaats: ${items.permit}`,
             };
             sgMail.send(msg);
-        });
+        })
+
     });
 }
+
+confirm();
+module.exports = app;

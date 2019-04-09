@@ -3,6 +3,7 @@ const serviceAccount = require('./serviceAccountKey.json');
 const express = require('express');
 const { WebhookClient } = require('dialogflow-fulfillment');
 const app = express();
+const mailService = require('./mailservice.js');
 
 // initialise DB connection
 admin.initializeApp({
@@ -39,14 +40,14 @@ app.post('/dialogflow', express.json(), (req, res) => {
 
   function handleAdress(agent) {
     const adress = agent.parameters.adress;
-    const adressId = 1;
+    const userId = 1;
 
     if (adress) {
       agent.add(`Thank you ${adress}!`);
 
       return admin
         .database()
-        .ref('/adress/' + adressId)
+        .ref('users/')
         .set({
           adress: adress
         })
@@ -61,14 +62,14 @@ app.post('/dialogflow', express.json(), (req, res) => {
 
   function handleBuyOrRent(agent) {
     const buying = agent.parameters.buying;
-    const buyinId = 1;
+    const userId = 1;
 
     if (buying) {
       agent.add(`Thank you ${buying}!`);
 
       return admin
         .database()
-        .ref('/buying/' + buyinId)
+        .ref('users/')
         .set({
           buying: buying
         })
@@ -83,14 +84,14 @@ app.post('/dialogflow', express.json(), (req, res) => {
 
   function handlePermit(agent) {
     const permit = agent.parameters.permit;
-    const permitId = 1;
+    const userId = 1;
 
     if (permit) {
       agent.add(`Thank you ${permit}!`);
 
       return admin
         .database()
-        .ref('/permit/' + permitId)
+        .ref('users/')
         .set({
           permit: permit
         })
@@ -103,12 +104,18 @@ app.post('/dialogflow', express.json(), (req, res) => {
     }
   }
 
+  function confirmRequest(agent) {
+    mailService.confirm();
+  }
+
+
   // Run the proper function handler based on the matched Dialogflow intent name
   let intentMap = new Map();
   intentMap.set('AskName', handleName);
   intentMap.set('myAdress', handleAdress);
   intentMap.set('rentOrBuy', handleBuyOrRent);
   intentMap.set('parkingPermit', handlePermit);
+  intentMap.set('confirm', confirmRequest);
   agent.handleRequest(intentMap);
 });
 
