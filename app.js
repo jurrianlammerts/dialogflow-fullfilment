@@ -14,6 +14,7 @@ admin.initializeApp({
   databaseURL: process.env.FIREBASE_URL
 });
 
+
 app.get('/', (req, res) => res.send('online'));
 app.post('/dialogflow', express.json(), (req, res) => {
   const agent = new WebhookClient({ request: req, response: res });
@@ -124,13 +125,14 @@ app.post('/dialogflow', express.json(), (req, res) => {
 
 
   function handleConfirmation(agent) {
-    const db = admin.database();
-    const ref = db.ref("users");
+    const confirm = agent.parameters.confirm;
 
-    return admin
-      .database()
-      .ref("users")
-      .on('value', function (snapshot) {
+    if (confirm) {
+      agent.add('Confirmed! Data sent via email')
+      const db = admin.database();
+      const ref = db.ref("users");
+
+      return ref.on('value', function (snapshot) {
         const data = snapshot.val();
         const { name, buyingOrRenting, adress, permit } = data[1];
 
@@ -146,28 +148,10 @@ app.post('/dialogflow', express.json(), (req, res) => {
                    Buying or renting: ${buyingOrRenting}<br/>
                    Parking permit: ${permit}`
         }
-        agent.add(`Confirmed! and mail with further information is send `);
+
         sgMail.send(msg);
       });
-    // ref.on('value', function (snapshot) {
-    //   const data = snapshot.val();
-    //   const { name, buyingOrRenting, adress, permit } = data[1];
-
-    //   const msg = {
-    //     to: 'marvin.holleman@hotmail.nl',
-    //     from: 'bevestiging@voix.com',
-    //     subject: 'Afspraak bevestiging',
-    //     html: `<h1>Thank you for your Request!</h1>
-    //         <h3>Please take this email to your appointment at the district office</h3> <br/>
-    //                Your Name: ${name} <br/> 
-    //                type of request: Relocation <br/>
-    //                Your new adress: ${adress} <br/>
-    //                Buying or renting: ${buyingOrRenting}<br/>
-    //                Parking permit: ${permit}`
-    //   }
-
-    //   sgMail.send(msg);
-    // });
+    }
 
   }
 
