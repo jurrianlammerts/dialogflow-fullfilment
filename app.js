@@ -39,7 +39,7 @@ app.post('/dialogflow', express.json(), (req, res) => {
     const userId = 1;
 
     if (name) {
-      agent.add(`Thank you ${name}!`);
+      agent.add(`Thanks ${name}, what is your adress?`);
 
       return admin
         .database()
@@ -47,10 +47,6 @@ app.post('/dialogflow', express.json(), (req, res) => {
         .set({
           name: name
         })
-        .then(snapshot => {
-          // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-          console.log('database write succesfull: ' + snapshot.ref.toString());
-        });
     } else {
       agent.add(`Oops something went wrong... Please try again.`);
     }
@@ -62,7 +58,7 @@ app.post('/dialogflow', express.json(), (req, res) => {
     const userId = 1;
 
     if (adress) {
-      agent.add(`Thank you ${adress}!`);
+      agent.add(`Thanks, are you buying or renting?`);
 
       return admin
         .database()
@@ -70,10 +66,6 @@ app.post('/dialogflow', express.json(), (req, res) => {
         .update({
           adress: adress
         })
-        .then(snapshot => {
-          // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-          console.log('database write succesfull: ' + snapshot.ref.toString());
-        });
     } else {
       agent.add(`Oops something went wrong... Please try again.`);
     }
@@ -84,7 +76,7 @@ app.post('/dialogflow', express.json(), (req, res) => {
     const userId = 1;
 
     if (buying) {
-      agent.add(`Thank you ${buying}!`);
+      agent.add(`Thanks, do you need a parking permit?`);
 
       return admin
         .database()
@@ -92,10 +84,6 @@ app.post('/dialogflow', express.json(), (req, res) => {
         .update({
           buyingOrRenting: buying
         })
-        .then(snapshot => {
-          // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-          console.log('database write succesfull: ' + snapshot.ref.toString());
-        });
     } else {
       agent.add(`Oops something went wrong... Please try again.`);
     }
@@ -106,7 +94,7 @@ app.post('/dialogflow', express.json(), (req, res) => {
     const userId = 1;
 
     if (permit) {
-      agent.add(`Thank you ${permit}!`);
+      agent.add(`Thanks, are you sure about all the data?`);
 
       return admin
         .database()
@@ -114,10 +102,6 @@ app.post('/dialogflow', express.json(), (req, res) => {
         .update({
           permit: permit
         })
-        .then(snapshot => {
-          // Redirect with 303 SEE OTHER to the URL of the pushed object in the Firebase console.
-          console.log('database write succesfull: ' + snapshot.ref.toString());
-        });
     } else {
       agent.add(`Oops something went wrong... Please try again.`);
     }
@@ -128,7 +112,7 @@ app.post('/dialogflow', express.json(), (req, res) => {
     const confirm = agent.parameters.confirm;
 
     if (confirm) {
-      agent.add('Confirmed! Data sent via email')
+      agent.add('Confirmed! Further instructions in your email')
       const db = admin.database();
       const ref = db.ref("users");
 
