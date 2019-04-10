@@ -1,23 +1,15 @@
 
-const firebase = require('firebase');
+const admin = require("firebase-admin");
 
 const sgMail = require('@sendgrid/mail');
-const express = require('express')
+// const express = require('express')
 
-const app = express()
+require('dotenv').config()
 
-const serviceAccount = require('./serviceAccountKey.json');
+// const app = express()
 
+// const serviceAccount = require('./serviceAccountKey.json');
 
-const config = {
-    apiKey: process.env.API_KEY,
-    authDomain: process.env.AUTH_DOMAIN,
-    databaseURL: process.env.DB_URL,
-    projectId: process.env.PROJECT_ID,
-    storageBucket: process.env.STORAGE_BUCKET,
-    messagingSenderId: process.env.MESSAGING_SENDER_ID
-}
-console.log(process.env.DB_URL)
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 // firebase.initializeApp(config);
 
@@ -28,29 +20,30 @@ sgMail.setApiKey(process.env.SENDGRID_KEY);
 //     databaseURL: 'https://voix-233614.firebaseio.com/'
 // });
 
-app.get('/', (req, res) => res.send('online'))
+// app.get('/', (req, res) => res.send('online'))
 
-function confirm() {
+const confirm = admin => {
     // const db = firebase.app().database().ref('adress');
     const db = admin.database();
     const ref = db.ref("users");
     ref.on('value', function (snapshot) {
-        snapshot.forEach(function (doc) {
-            let items = doc.val();
-            console.log('keys', items);
-            const msg = {
-                to: 'marvin.holleman@hotmail.nl',
-                from: 'bevestiging@voix.com',
-                subject: 'Afspraak bevestiging',
-                html: `Je naam: ${items.name} <br/> 
-                   Geboortedatum: ${items.buying} <br/>
-                   Woonplaats: ${items.permit}`,
-            };
-            sgMail.send(msg);
-        })
+        const data = snapshot.val();
+        const { name, buyingOrRenting, adress, permit } = data[1];
 
+        const msg = {
+            to: 'marvin.holleman@hotmail.nl',
+            from: 'bevestiging@voix.com',
+            subject: 'Afspraak bevestiging',
+            html: `<h1>Thank you for your Request!</h1>
+            <h3>Please take this email to your appointment at the district office</h3> <br/>
+                   Your Name: ${name} <br/> 
+                   type of request: Relocation <br/>
+                   Your new adress: ${adress} <br/>
+                   Buying or renting: ${buyingOrRenting}<br/>
+                   Parking permit: ${permit}`
+        };
+        sgMail.send(msg);
     });
 }
 
-confirm();
-module.exports = app;
+module.exports = confirm;
