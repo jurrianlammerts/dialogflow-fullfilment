@@ -1,6 +1,5 @@
 
 const firebase = require('firebase');
-var admin = require("firebase-admin");
 
 const sgMail = require('@sendgrid/mail');
 const express = require('express')
@@ -22,10 +21,12 @@ console.log(process.env.DB_URL)
 sgMail.setApiKey('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');
 // firebase.initializeApp(config);
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://voix-233614.firebaseio.com/'
-});
+// TODO: you only need to call initializeApp() once
+
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccount),
+//     databaseURL: 'https://voix-233614.firebaseio.com/'
+// });
 
 app.get('/', (req, res) => res.send('online'))
 
