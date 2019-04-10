@@ -18,7 +18,7 @@ const config = {
     messagingSenderId: process.env.MESSAGING_SENDER_ID
 }
 console.log(process.env.DB_URL)
-// sgMail.setApiKey('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');
+sgMail.setApiKey(process.env.SENDGRID_KEY);
 // firebase.initializeApp(config);
 
 // TODO: you only need to call initializeApp() once
